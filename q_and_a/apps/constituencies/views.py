@@ -7,8 +7,7 @@ from django.http import Http404
 
 from constituencies.models import Constituency
 from candidates.models import Candidate
-from questions.models import Question, Answer
-from organisations.models import Organisation
+from questions.models import Answer
 
 def ynmp_get_constituency_from_postcode(postcode):
     postcode = postcode.replace(' ', '').lower()
