@@ -1,4 +1,3 @@
-from django.core.urlresolvers import resolve
 from django.http import HttpRequest
 from django.template.loader import render_to_string
 from django.test import TestCase
@@ -14,8 +13,8 @@ from constituencies.views import HomePageView
 class HomePageTest(TestCase):
 
     def test_uses_homepage_template(self):
-        found = resolve('/')
-        self.assertEqual(found.func, HomePageView)
+        response = self.client.get('/')
+        self.assertTemplateUsed(response, 'home.html')
 
     def test_homepage_returns_correct_html(self):
         request = HttpRequest()
