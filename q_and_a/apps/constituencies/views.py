@@ -3,7 +3,6 @@ import json
 
 from django.views.generic import ListView
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db import IntegrityError
 from django.http import Http404
 
 from constituencies.models import Constituency
