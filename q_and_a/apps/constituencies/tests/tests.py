@@ -163,12 +163,11 @@ class ConstituencyViewTest(TestCase):
         self.assertTemplateUsed(response, 'constituency.html')
 
     def test_displays_correct_constituency_name(self):
-        correct_wmc = Constituency.objects.create(constituency_id=2, name='Correct Constituency')
-        other_wmc = Constituency.objects.create(constituency_id=3, name='Other Constituency')
+        other_wmc = Constituency.objects.create(constituency_id=2, name='Other Constituency')
 
-        response = self.client.get('/constituencies/%d/' % (correct_wmc.constituency_id,))
+        response = self.client.get('/constituencies/%d/' % (self.wmc.constituency_id,))
 
-        self.assertContains(response, 'Correct Constituency')
+        self.assertContains(response, 'Dunny-on-the-Wold')
         self.assertNotContains(response,'Other Constituency')
 
     def test_displays_candidates_for_constituency(self):
