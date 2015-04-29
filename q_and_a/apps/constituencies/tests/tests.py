@@ -17,8 +17,9 @@ class HomePageTest(TestCase):
         self.assertTemplateUsed(response, 'home.html')
 
     def test_homepage_returns_correct_html(self):
+        view = HomePageView()
         request = HttpRequest()
-        response = HomePageView(request)
+        response = view.get(request)
         expected_html = render_to_string('home.html', {
             'candidates_involved': 0,
             'questions_answered': 0,

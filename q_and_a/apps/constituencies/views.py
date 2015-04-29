@@ -1,7 +1,7 @@
 from urllib2 import urlopen, HTTPError, URLError
 import json
 
-from django.views.generic import ListView
+from django.views.generic import ListView, TemplateView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import Http404
 
@@ -29,8 +29,10 @@ def ynmp_get_constituency_from_postcode(postcode):
         'name': wmc_name,
     })
 
-def HomePageView(request):
-    if request.method == 'POST':
+
+class HomePageView(TemplateView):
+
+    def post(self, request):
         postcode = request.POST['postcode']
         wmc_data = ynmp_get_constituency_from_postcode(postcode)
         if wmc_data['status_code'] == 200:
@@ -44,13 +46,14 @@ def HomePageView(request):
         else:
             raise Http404("Constituency not found")
 
-    candidates_involved = Candidate.objects.filter(answer__completed=True).distinct().count()
-    questions_answered = Answer.objects.filter(completed=True).count()
+    def get(self, request):
+        candidates_involved = Candidate.objects.filter(answer__completed=True).distinct().count()
+        questions_answered = Answer.objects.filter(completed=True).count()
 
-    return render(request, 'home.html', {
-        'candidates_involved': candidates_involved,
-        'questions_answered': questions_answered,
-    })
+        return render(request, 'home.html', {
+            'candidates_involved': candidates_involved,
+            'questions_answered': questions_answered,
+        })
 
 
 class ConstituencyView(ListView):
