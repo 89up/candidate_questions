@@ -216,6 +216,6 @@ class ConstituencyViewTest(TestCase):
             '<li><a href="/candidates/view_answer/3">' +
             'Brigadier General Horace Bolsom</a> ' +
             '(Keep Royalty White, Rat Catching And Safe Sewage Residents Party / ' +
-            'Not participating)</li>',
+            '0 questions answered)</li>',
             html=True
         )

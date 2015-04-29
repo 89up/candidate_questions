@@ -55,12 +55,13 @@ def HomePageView(request):
 
 def ConstituencyView(request, wmc_id):
     candidates = Candidate.objects.filter(constituency_id=wmc_id)
-    if not candidates:
-        raise Http404("Constituency not found")
     try:
         wmc_name = Constituency.objects.get(constituency_id=wmc_id).name
     except Constituency.DoesNotExist:
-        wmc_name = candidates.first().constituency_name
+        try:
+            wmc_name = candidates.first().constituency_name
+        except AttributeError:
+            raise Http404("Constituency not found")
 
     return render(request, 'constituency.html', {
         'constituency': wmc_name,

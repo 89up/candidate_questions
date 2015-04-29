@@ -52,7 +52,6 @@ class CandidateDetailsTest(FunctionalTest):
         })
 
         # No unanswered questions appear.
-        self.fail('Finish the test!')
 
         # I decide to review the answers from another candidate
         # in my constituency so I click a link to return to the

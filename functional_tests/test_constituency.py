@@ -37,13 +37,12 @@ class ConstituencyTest(FunctionalTest):
         # They can see:
         #   which candidates are standing in their constituency, and;
         #   to which party each belongs; and
-        #   either the number of questions each has answered, or;
-        #   that the candidate has chosen not to participate.
+        #   the number of questions each has answered.
         self.check_for_strings_in_page_element('body', {
             'Chris Bowers (Liberal Democrats / 2 questions answered)',
             'Nigel Carter (UK Independence Party (UKIP) / 2 questions answered)',
             'Caroline Lucas (Green Party / 2 questions answered)',
-            'Clarence Mitchell (Conservative Party / Not participating)',
+            'Clarence Mitchell (Conservative Party / 2 questions answered)',
             'Howard Pilott (The Socialist Party of Great Britain / 2 questions answered)',
             'Purna Sen (Labour Party / 2 questions answered)',
             'Nick Yeomans (Independent / 1 questions answered)',
