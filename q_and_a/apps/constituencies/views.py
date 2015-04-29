@@ -1,7 +1,8 @@
 from urllib2 import urlopen, HTTPError, URLError
 import json
 
-from django.shortcuts import render, redirect
+from django.views.generic import ListView
+from django.shortcuts import render, redirect, get_object_or_404
 from django.db import IntegrityError
 from django.http import Http404
 
@@ -52,17 +53,21 @@ def HomePageView(request):
         'questions_answered': questions_answered,
     })
 
-def ConstituencyView(request, wmc_id):
-    candidates = Candidate.objects.filter(constituency_id=wmc_id)
-    try:
-        wmc_name = Constituency.objects.get(constituency_id=wmc_id).name
-    except Constituency.DoesNotExist:
-        try:
-            wmc_name = candidates.first().constituency_name
-        except AttributeError:
-            raise Http404("Constituency not found")
 
-    return render(request, 'constituency.html', {
-        'constituency': wmc_name,
-        'candidates': candidates,
-    })
+class ConstituencyView(ListView):
+    model = Candidate
+    template_name = 'constituency_list.html'
+
+    def get_queryset(self, **kwargs):
+        return Candidate.objects.filter(constituency_id=self.args[0])
+
+    def get_context_data(self, **kwargs):
+        context = super(ConstituencyView, self).get_context_data(**kwargs)
+	try:
+            context['constituency'] = Constituency.objects.get(constituency_id=self.args[0]).name
+        except Constituency.DoesNotExist:
+            try:
+                context['constituency'] = context.first().constituency_name
+	    except AttributeError:
+                raise Http404("Constituency not found")
+        return context

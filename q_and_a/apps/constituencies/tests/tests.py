@@ -159,15 +159,14 @@ class ConstituencyViewTest(TestCase):
 
     def test_uses_constituency_template(self):
         response = self.client.get('/constituencies/%d/' % (self.wmc.constituency_id,))
-        self.assertTemplateUsed(response, 'constituency.html')
+        self.assertTemplateUsed(response, 'constituency_list.html')
 
     def test_displays_correct_constituency_name(self):
-        correct_wmc = Constituency.objects.create(constituency_id=2, name='Correct Constituency')
-        other_wmc = Constituency.objects.create(constituency_id=3, name='Other Constituency')
+        other_wmc = Constituency.objects.create(constituency_id=2, name='Other Constituency')
 
-        response = self.client.get('/constituencies/%d/' % (correct_wmc.constituency_id,))
+        response = self.client.get('/constituencies/%d/' % (self.wmc.constituency_id,))
 
-        self.assertContains(response, 'Correct Constituency')
+        self.assertContains(response, 'Dunny-on-the-Wold')
         self.assertNotContains(response,'Other Constituency')
 
     def test_displays_candidates_for_constituency(self):
@@ -182,7 +181,7 @@ class ConstituencyViewTest(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_valid_constituency_not_in_database(self):
-        response = self.client.post('/constituencies/65993/')
+        response = self.client.get('/constituencies/65993/')
 
         self.assertEqual(response.status_code, 404)
 
