@@ -62,11 +62,11 @@ class ConstituencyView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ConstituencyView, self).get_context_data(**kwargs)
-	try:
+        try:
             context['constituency'] = Constituency.objects.get(constituency_id=self.args[0]).name
         except Constituency.DoesNotExist:
             try:
                 context['constituency'] = context.first().constituency_name
-	    except AttributeError:
+            except AttributeError:
                 raise Http404("Constituency not found")
         return context
