@@ -10,7 +10,7 @@
   <h2>Candidates</h2>
 
   <ul>
-    {% for candidate in candidates %}
+    {% for candidate in object_list %}
       <li><a href="/candidates/view_answer/{{ candidate.popit_id }}">{{ candidate.name }}</a> ({{ candidate.party }} /
         {{ candidate.get_answer_count }} questions answered)</li>
     {% endfor %}

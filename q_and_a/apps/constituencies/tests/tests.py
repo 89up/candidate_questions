@@ -1,4 +1,3 @@
-from django.core.urlresolvers import resolve
 from django.http import HttpRequest
 from django.template.loader import render_to_string
 from django.test import TestCase
@@ -14,12 +13,13 @@ from constituencies.views import HomePageView
 class HomePageTest(TestCase):
 
     def test_uses_homepage_template(self):
-        found = resolve('/')
-        self.assertEqual(found.func, HomePageView)
+        response = self.client.get('/')
+        self.assertTemplateUsed(response, 'home.html')
 
     def test_homepage_returns_correct_html(self):
+        view = HomePageView()
         request = HttpRequest()
-        response = HomePageView(request)
+        response = view.get(request)
         expected_html = render_to_string('home.html', {
             'candidates_involved': 0,
             'questions_answered': 0,
@@ -160,7 +160,7 @@ class ConstituencyViewTest(TestCase):
 
     def test_uses_constituency_template(self):
         response = self.client.get('/constituencies/%d/' % (self.wmc.constituency_id,))
-        self.assertTemplateUsed(response, 'constituency.html')
+        self.assertTemplateUsed(response, 'constituency_list.html')
 
     def test_displays_correct_constituency_name(self):
         correct_wmc = Constituency.objects.create(constituency_id=2, name='Correct Constituency')
@@ -183,7 +183,7 @@ class ConstituencyViewTest(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_valid_constituency_not_in_database(self):
-        response = self.client.post('/constituencies/65993/')
+        response = self.client.get('/constituencies/65993/')
 
         self.assertEqual(response.status_code, 404)
 

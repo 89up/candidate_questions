@@ -1,14 +1,13 @@
 from urllib2 import urlopen, HTTPError, URLError
 import json
 
-from django.shortcuts import render, redirect
-from django.db import IntegrityError
+from django.views.generic import ListView, TemplateView
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import Http404
 
 from constituencies.models import Constituency
 from candidates.models import Candidate
-from questions.models import Question, Answer
-from organisations.models import Organisation
+from questions.models import Answer
 
 def ynmp_get_constituency_from_postcode(postcode):
     postcode = postcode.replace(' ', '').lower()
@@ -30,8 +29,10 @@ def ynmp_get_constituency_from_postcode(postcode):
         'name': wmc_name,
     })
 
-def HomePageView(request):
-    if request.method == 'POST':
+
+class HomePageView(TemplateView):
+
+    def post(self, request):
         postcode = request.POST['postcode']
         wmc_data = ynmp_get_constituency_from_postcode(postcode)
         if wmc_data['status_code'] == 200:
@@ -45,25 +46,30 @@ def HomePageView(request):
         else:
             raise Http404("Constituency not found")
 
-    candidates_involved = Candidate.objects.filter(answer__completed=True).distinct().count()
-    questions_answered = Answer.objects.filter(completed=True).count()
+    def get(self, request):
+        candidates_involved = Candidate.objects.filter(answer__completed=True).distinct().count()
+        questions_answered = Answer.objects.filter(completed=True).count()
 
-    return render(request, 'home.html', {
-        'candidates_involved': candidates_involved,
-        'questions_answered': questions_answered,
-    })
+        return render(request, 'home.html', {
+            'candidates_involved': candidates_involved,
+            'questions_answered': questions_answered,
+        })
 
-def ConstituencyView(request, wmc_id):
-    candidates = Candidate.objects.filter(constituency_id=wmc_id)
-    try:
-        wmc_name = Constituency.objects.get(constituency_id=wmc_id).name
-    except Constituency.DoesNotExist:
+
+class ConstituencyView(ListView):
+    model = Candidate
+    template_name = 'constituency_list.html'
+
+    def get_queryset(self, **kwargs):
+        return Candidate.objects.filter(constituency_id=self.args[0])
+
+    def get_context_data(self, **kwargs):
+        context = super(ConstituencyView, self).get_context_data(**kwargs)
         try:
-            wmc_name = candidates.first().constituency_name
-        except AttributeError:
-            raise Http404("Constituency not found")
-
-    return render(request, 'constituency.html', {
-        'constituency': wmc_name,
-        'candidates': candidates,
-    })
+            context['constituency'] = Constituency.objects.get(constituency_id=self.args[0]).name
+        except Constituency.DoesNotExist:
+            try:
+                context['constituency'] = context.first().constituency_name
+            except AttributeError:
+                raise Http404("Constituency not found")
+        return context

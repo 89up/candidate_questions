@@ -4,14 +4,14 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.conf.urls.static import static
-from django.views.generic import TemplateView
 
 from django.contrib import admin
 admin.autodiscover()
 
+from constituencies.views import HomePageView
+
 urlpatterns = patterns('',
-    url(r'^$', 'constituencies.views.HomePageView', name='home'),
-    # Uncomment the next line to enable the admin:
+    url(r'^$', HomePageView.as_view(), name='home'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^organisations', include('organisations.urls')),
     url(r'^candidates', include('candidates.urls')),
